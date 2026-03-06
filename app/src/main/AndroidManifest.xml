@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ExambroCBT"
         android:hardwareAccelerated="true"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <!-- Splash -->
         <activity

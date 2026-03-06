@@ -118,15 +118,16 @@
                         android:indeterminateTint="@color/white" android:visibility="gone"/>
                     <TextView android:id="@+id/btnMasukText"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_gravity="center" android:text="Masuk ke Ujian"
-                        android:textSize="15sp" android:textStyle="bold" android:textColor="@color/white"/>
+                        android:layout_gravity="center" android:text="Buka"
+                        android:textSize="15sp" android:textStyle="bold" android:textColor="@color/white"
+                        android:elevation="1dp"/>
                 </FrameLayout>
 
                 <!-- Keluar button -->
                 <Button android:id="@+id/btnKeluar"
                     android:layout_width="match_parent" android:layout_height="46dp"
-                    android:text="Keluar / Ada Masalah" android:textSize="13sp"
-                    android:textColor="@color/red_accent" android:background="@drawable/btn_outline_red"
+                    android:text="Keluar" android:textSize="13sp"
+                    android:textColor="@color/white" android:background="@drawable/btn_keluar_red"
                     android:layout_marginTop="10dp" android:insetTop="0dp" android:insetBottom="0dp"/>
 
             </LinearLayout>

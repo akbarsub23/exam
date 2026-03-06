@@ -37,7 +37,7 @@ class LandingActivity : AppCompatActivity() {
         binding.btnMasuk.setOnClickListener {
             binding.btnMasuk.isEnabled = false
             binding.btnMasukProgress.visibility = View.VISIBLE
-            binding.btnMasukText.text = "Membuka ujian..."
+            binding.btnMasukText.text = "Membuka..."
 
             val net = networks[selectedIndex]
             startActivity(Intent(this, ExamBrowserActivity::class.java).apply {
@@ -49,7 +49,7 @@ class LandingActivity : AppCompatActivity() {
             binding.root.postDelayed({
                 binding.btnMasuk.isEnabled = true
                 binding.btnMasukProgress.visibility = View.GONE
-                binding.btnMasukText.text = "Masuk ke Ujian"
+                binding.btnMasukText.text = "Buka"
             }, 2000)
         }
 
