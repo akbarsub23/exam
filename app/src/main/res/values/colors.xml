@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_deep">#1a3a6e</color>
+    <color name="blue_mid">#2563b0</color>
+    <color name="blue_light">#4a90d9</color>
+    <color name="blue_pale">#dbeafe</color>
+    <color name="red_accent">#d63031</color>
+    <color name="gold">#f4b942</color>
+    <color name="white">#ffffff</color>
+    <color name="gray_soft">#f0f5fb</color>
+    <color name="gray_text">#4a5568</color>
+    <color name="card_white">#f8faff</color>
+    <color name="green_lock">#27ae60</color>
+    <color name="colorPrimary">@color/blue_mid</color>
+    <color name="colorPrimaryDark">@color/blue_deep</color>
+    <color name="colorAccent">@color/gold</color>
+</resources>

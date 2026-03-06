@@ -1,0 +1,2 @@
+-keepattributes *Annotation*
+-keep class id.sch.smkn1gempol.exambro.** { *; }

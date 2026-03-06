@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.ExambroCBT" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_mid</item>
+        <item name="colorPrimaryDark">@color/blue_deep</item>
+        <item name="colorAccent">@color/gold</item>
+        <item name="android:windowBackground">@color/gray_soft</item>
+        <item name="android:statusBarColor">@color/blue_deep</item>
+        <item name="android:navigationBarColor">@color/blue_deep</item>
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+    <style name="Theme.Splash" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@color/gray_soft</item>
+        <item name="android:statusBarColor">@color/gray_soft</item>
+        <item name="android:navigationBarColor">@color/gray_soft</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <style name="ExitDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/BtnRed</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BtnBlue</item>
+    </style>
+    <style name="BtnRed" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/red_accent</item>
+    </style>
+    <style name="BtnBlue" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/blue_mid</item>
+    </style>
+</resources>
