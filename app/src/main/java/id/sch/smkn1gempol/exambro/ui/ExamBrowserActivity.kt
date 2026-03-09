@@ -26,11 +26,15 @@ class ExamBrowserActivity : AppCompatActivity() {
     private var examTitle = "Ujian CBT"
     private var isPinned  = false
 
-    private val allowedHosts = listOf(
-        "192.168.1.100",
-        "lms.semakinpol.my.id",
-        "localhost",
-        "127.0.0.1"
+    // Prefix URL yang diizinkan — semua sub-path Moodle otomatis lolos
+    private val allowedPrefixes = listOf(
+        "http://192.168.1.",   // seluruh subnet lokal (handle redirect Moodle)
+        "https://192.168.1.",
+        "http://10.",          // subnet alternatif
+        "https://10.",
+        "http://localhost",
+        "http://127.0.0.1",
+        "https://lms.semakinpol.my.id"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,16 +141,16 @@ class ExamBrowserActivity : AppCompatActivity() {
             }
 
             override fun shouldOverrideUrlLoading(view: WebView, req: WebResourceRequest): Boolean {
-                val host = req.url.host ?: ""
-                val url  = req.url.toString()
+                val url = req.url.toString()
 
-                // Izinkan semua URL dari host yang diperbolehkan
-                return if (allowedHosts.any { host.contains(it) }) {
+                // Izinkan jika URL diawali salah satu prefix yang diperbolehkan
+                // Ini menangani semua redirect internal Moodle (/login, /course, dll)
+                return if (allowedPrefixes.any { url.startsWith(it) }) {
                     false // lanjutkan di WebView
                 } else {
                     Toast.makeText(
                         this@ExamBrowserActivity,
-                        "🚫 Akses diblokir: $host",
+                        "🚫 Akses diblokir: $url",
                         Toast.LENGTH_SHORT
                     ).show()
                     true // blokir
