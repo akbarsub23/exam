@@ -11,6 +11,7 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.webkit.*
+import android.net.http.SslError
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -191,6 +192,34 @@ class ExamBrowserActivity : AppCompatActivity() {
                 if (req.isForMainFrame && resp.statusCode >= 400) {
                     binding.progressBar.visibility = View.GONE
                     showError("Server merespons error HTTP ${resp.statusCode}.\nURL: ${req.url}")
+                }
+            }
+
+            /**
+             * Abaikan SSL error untuk jaringan lokal (IP 192.168.x.x / 10.x.x.x).
+             * Server Moodle lokal sering pakai sertifikat domain (lms.semakinpol.my.id)
+             * yang tidak valid untuk akses via IP — ini normal dan aman di jaringan sekolah.
+             */
+            override fun onReceivedSslError(
+                view: WebView,
+                handler: android.webkit.SslErrorHandler,
+                error: SslError
+            ) {
+                val url = error.url ?: ""
+                val isLocalNetwork = url.contains("192.168.") ||
+                                     url.contains("10.0.")     ||
+                                     url.contains("10.10.")    ||
+                                     url.contains("172.16.")   ||
+                                     url.contains("localhost") ||
+                                     url.contains("127.0.0.1")
+
+                if (isLocalNetwork) {
+                    // Lanjutkan meski sertifikat tidak valid — aman untuk LAN sekolah
+                    handler.proceed()
+                } else {
+                    // Untuk server publik, tetap batalkan jika SSL bermasalah
+                    handler.cancel()
+                    showError("Koneksi tidak aman ke server online.\nHubungi administrator.")
                 }
             }
         }
