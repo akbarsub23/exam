@@ -47,7 +47,16 @@ class ExamBrowserActivity : AppCompatActivity() {
         startKioskService()
         activateScreenLock()
 
+        loadExamUrl()
+    }
+
+    private fun loadExamUrl() {
         if (NetworkUtils.isConnected(this)) {
+            binding.layoutError.visibility = View.GONE
+            binding.webView.visibility     = View.VISIBLE
+            // Hapus cache dan history agar tidak ada redirect tersimpan
+            binding.webView.clearCache(true)
+            binding.webView.clearHistory()
             binding.webView.loadUrl(examUrl)
         } else {
             showError("Tidak ada koneksi jaringan.\nPeriksa WiFi dan coba lagi.")
@@ -93,36 +102,92 @@ class ExamBrowserActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         binding.webView.settings.apply {
-            javaScriptEnabled = true; domStorageEnabled = true; databaseEnabled = true
-            loadWithOverviewMode = true; useWideViewPort = true
-            builtInZoomControls = false; setSupportZoom(false)
-            cacheMode = WebSettings.LOAD_DEFAULT
-            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            userAgentString = "ExambroCBT/4.0 (SMKN1Gempol SafeExamBrowser)"
-            allowFileAccessFromFileURLs = false
+            javaScriptEnabled     = true
+            domStorageEnabled     = true
+            databaseEnabled       = true
+            loadWithOverviewMode  = true
+            useWideViewPort       = true
+            builtInZoomControls   = false
+            setSupportZoom(false)
+            // PENTING: izinkan semua konten termasuk HTTP
+            mixedContentMode      = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            // Izinkan cleartext (HTTP) secara eksplisit di WebView
+            @Suppress("DEPRECATION")
+            allowFileAccess       = true
+            cacheMode             = WebSettings.LOAD_NO_CACHE
+            userAgentString       = "Mozilla/5.0 (Linux; Android 10) ExambroCBT/4.0"
+            allowFileAccessFromFileURLs      = false
             allowUniversalAccessFromFileURLs = false
         }
 
+        // Izinkan cookie
+        CookieManager.getInstance().apply {
+            setAcceptCookie(true)
+            setAcceptThirdPartyCookies(binding.webView, true)
+        }
+
         binding.webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldInterceptRequest(
+                view: WebView,
+                request: WebResourceRequest
+            ): WebResourceResponse? {
+                // Jangan intercept — biarkan WebView handle semua request termasuk HTTP
+                return null
+            }
+
             override fun shouldOverrideUrlLoading(view: WebView, req: WebResourceRequest): Boolean {
                 val host = req.url.host ?: ""
-                return if (allowedHosts.any { host.contains(it) }) false
-                else {
-                    Toast.makeText(this@ExamBrowserActivity, "🚫 Akses diblokir: $host", Toast.LENGTH_SHORT).show()
-                    true
+                val url  = req.url.toString()
+
+                // Izinkan semua URL dari host yang diperbolehkan
+                return if (allowedHosts.any { host.contains(it) }) {
+                    false // lanjutkan di WebView
+                } else {
+                    Toast.makeText(
+                        this@ExamBrowserActivity,
+                        "🚫 Akses diblokir: $host",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true // blokir
                 }
             }
+
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                 binding.progressBar.visibility = View.VISIBLE
+                binding.webView.visibility     = View.VISIBLE
+                binding.layoutError.visibility = View.GONE
                 binding.tvUrl.text = url
             }
+
             override fun onPageFinished(view: WebView, url: String) {
                 binding.progressBar.visibility = View.GONE
-                binding.tvTitle.text = view.title ?: examTitle
+                binding.tvTitle.text = view.title?.takeIf { it.isNotBlank() } ?: examTitle
                 injectSecurityJS(view)
             }
-            override fun onReceivedError(view: WebView, req: WebResourceRequest, err: WebResourceError) {
-                if (req.isForMainFrame) { binding.progressBar.visibility = View.GONE; showError("Gagal memuat.\n${err.description}") }
+
+            override fun onReceivedError(
+                view: WebView,
+                req: WebResourceRequest,
+                err: WebResourceError
+            ) {
+                if (req.isForMainFrame) {
+                    binding.progressBar.visibility = View.GONE
+                    val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) err.errorCode else -1
+                    val desc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) err.description.toString() else "Gagal"
+                    showError("Tidak dapat terhubung ke server.\n\nURL: ${req.url}\nError: $desc (kode $code)\n\nPastikan:\n• HP terhubung ke WiFi sekolah\n• Server ujian menyala")
+                }
+            }
+
+            override fun onReceivedHttpError(
+                view: WebView,
+                req: WebResourceRequest,
+                resp: WebResourceResponse
+            ) {
+                if (req.isForMainFrame && resp.statusCode >= 400) {
+                    binding.progressBar.visibility = View.GONE
+                    showError("Server merespons error HTTP ${resp.statusCode}.\nURL: ${req.url}")
+                }
             }
         }
 
@@ -132,13 +197,15 @@ class ExamBrowserActivity : AppCompatActivity() {
                 binding.loadingBar.visibility = if (p < 100) View.VISIBLE else View.GONE
             }
             override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
-                MaterialAlertDialogBuilder(this@ExamBrowserActivity).setMessage(message)
-                    .setPositiveButton("OK") { _, _ -> result.confirm() }.setCancelable(false).show(); return true
+                MaterialAlertDialogBuilder(this@ExamBrowserActivity)
+                    .setMessage(message).setPositiveButton("OK") { _, _ -> result.confirm() }
+                    .setCancelable(false).show(); return true
             }
             override fun onJsConfirm(view: WebView, url: String, message: String, result: JsResult): Boolean {
                 MaterialAlertDialogBuilder(this@ExamBrowserActivity).setMessage(message)
                     .setPositiveButton("Ya") { _, _ -> result.confirm() }
-                    .setNegativeButton("Tidak") { _, _ -> result.cancel() }.setCancelable(false).show(); return true
+                    .setNegativeButton("Tidak") { _, _ -> result.cancel() }
+                    .setCancelable(false).show(); return true
             }
         }
     }
@@ -160,9 +227,10 @@ class ExamBrowserActivity : AppCompatActivity() {
     private fun setupToolbar() {
         binding.tvTitle.text = examTitle
         binding.tvUrl.text   = examUrl
-        binding.btnRefresh.setOnClickListener { binding.webView.reload() }
-        binding.btnBack.setOnClickListener { if (binding.webView.canGoBack()) binding.webView.goBack() }
-        // Keluar langsung — tanpa PIN
+        binding.btnRefresh.setOnClickListener { loadExamUrl() }
+        binding.btnBack.setOnClickListener {
+            if (binding.webView.canGoBack()) binding.webView.goBack()
+        }
         binding.btnKeluar.setOnClickListener { doExit() }
     }
 
@@ -177,25 +245,26 @@ class ExamBrowserActivity : AppCompatActivity() {
 
     private fun showError(msg: String) {
         binding.layoutError.visibility = View.VISIBLE
-        binding.webView.visibility = View.GONE
-        binding.tvErrorMsg.text = msg
-        binding.btnRetry.setOnClickListener {
-            if (NetworkUtils.isConnected(this)) {
-                binding.layoutError.visibility = View.GONE
-                binding.webView.visibility = View.VISIBLE
-                binding.webView.loadUrl(examUrl)
-            } else Toast.makeText(this, "Masih belum ada koneksi", Toast.LENGTH_SHORT).show()
-        }
+        binding.webView.visibility     = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.tvErrorMsg.text        = msg
+        binding.btnRetry.setOnClickListener { loadExamUrl() }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> { if (binding.webView.canGoBack()) binding.webView.goBack() else doExit(); true }
+            KeyEvent.KEYCODE_BACK -> {
+                if (binding.webView.canGoBack()) binding.webView.goBack() else doExit(); true
+            }
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN, KeyEvent.KEYCODE_MENU -> true
             else -> super.onKeyDown(keyCode, event)
         }
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) { super.onWindowFocusChanged(hasFocus); if (hasFocus) setupFullscreen() }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) setupFullscreen()
+    }
+
     override fun onDestroy() { binding.webView.destroy(); super.onDestroy() }
 }

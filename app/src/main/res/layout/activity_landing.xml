@@ -107,28 +107,38 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Masuk button -->
-                <FrameLayout android:layout_width="match_parent" android:layout_height="52dp">
-                    <Button android:id="@+id/btnMasuk" android:layout_width="match_parent"
-                        android:layout_height="52dp" android:background="@drawable/btn_primary"
-                        android:insetTop="0dp" android:insetBottom="0dp"/>
-                    <ProgressBar android:id="@+id/btnMasukProgress"
-                        android:layout_width="22dp" android:layout_height="22dp"
-                        android:layout_gravity="start|center_vertical" android:layout_marginStart="18dp"
-                        android:indeterminateTint="@color/white" android:visibility="gone"/>
-                    <TextView android:id="@+id/btnMasukText"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_gravity="center" android:text="Buka"
-                        android:textSize="15sp" android:textStyle="bold" android:textColor="@color/white"
-                        android:elevation="1dp"/>
-                </FrameLayout>
+                <!-- ✅ Tombol BUKA — satu Button langsung, teks putih -->
+                <Button android:id="@+id/btnMasuk"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="Buka"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/btn_primary"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"/>
 
-                <!-- Keluar button -->
+                <!-- Hidden views agar binding tidak error -->
+                <ProgressBar android:id="@+id/btnMasukProgress"
+                    android:layout_width="1dp" android:layout_height="1dp"
+                    android:visibility="gone"/>
+                <TextView android:id="@+id/btnMasukText"
+                    android:layout_width="1dp" android:layout_height="1dp"
+                    android:visibility="gone"/>
+
+                <!-- ✅ Tombol KELUAR — background merah, teks putih -->
                 <Button android:id="@+id/btnKeluar"
-                    android:layout_width="match_parent" android:layout_height="46dp"
-                    android:text="Keluar" android:textSize="13sp"
-                    android:textColor="@color/white" android:background="@drawable/btn_keluar_red"
-                    android:layout_marginTop="10dp" android:insetTop="0dp" android:insetBottom="0dp"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="Keluar"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/btn_keluar_red"
+                    android:layout_marginTop="10dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

@@ -2,7 +2,6 @@ package id.sch.smkn1gempol.exambro.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -36,8 +35,7 @@ class LandingActivity : AppCompatActivity() {
 
         binding.btnMasuk.setOnClickListener {
             binding.btnMasuk.isEnabled = false
-            binding.btnMasukProgress.visibility = View.VISIBLE
-            binding.btnMasukText.text = "Membuka..."
+            binding.btnMasuk.text = "Membuka..."
 
             val net = networks[selectedIndex]
             startActivity(Intent(this, ExamBrowserActivity::class.java).apply {
@@ -48,8 +46,7 @@ class LandingActivity : AppCompatActivity() {
 
             binding.root.postDelayed({
                 binding.btnMasuk.isEnabled = true
-                binding.btnMasukProgress.visibility = View.GONE
-                binding.btnMasukText.text = "Buka"
+                binding.btnMasuk.text = "Buka"
             }, 2000)
         }
 

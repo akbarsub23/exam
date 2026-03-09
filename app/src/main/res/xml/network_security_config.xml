@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Izinkan HTTP (cleartext) ke server lokal -->
+    <!-- Izinkan semua HTTP untuk IP lokal -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.1.100</domain>
         <domain includeSubdomains="true">192.168.1.101</domain>
-        <domain includeSubdomains="true">192.168.0.100</domain>
-        <domain includeSubdomains="true">10.0.0.1</domain>
+        <domain includeSubdomains="true">10.10.10.1</domain>
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
     </domain-config>
-    <!-- HTTPS untuk server online -->
-    <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">lms.semakinpol.my.id</domain>
-    </domain-config>
+    <!-- Base config: izinkan cleartext secara umum (fallback) -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
 </network-security-config>
