@@ -275,7 +275,7 @@ class ExamBrowserActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this, R.style.ExitDialogTheme)
             .setTitle("⏳ Belum Bisa Keluar")
             .setMessage(
-                "Minimal ${ExamSession.lockMinutes} menit harus mengerjakan ujian.\n\n" +
+                "Minimal ${ExamSession.LOCK_MINUTES} menit harus mengerjakan ujian.\n\n" +
                 "Sisa waktu: ${ExamSession.formattedTimeRemaining(this)}\n\n" +
                 "Jika ada kondisi darurat, pengawas dapat keluar menggunakan PIN."
             )
