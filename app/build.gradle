@@ -11,15 +11,32 @@ android {
         applicationId "id.sch.smkn1gempol.exambro"
         minSdk 24
         targetSdk 34
-        versionCode 3
-        versionName "3.0.0"
+        versionCode 5
+        versionName "5.0.0"
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
+        debug {
+            // Debug tetap kecil
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // Hanya include bahasa Indonesia + Inggris — buang resource bahasa lain
+    defaultConfig {
+        applicationId "id.sch.smkn1gempol.exambro"
+        minSdk 24
+        targetSdk 34
+        versionCode 5
+        versionName "5.0.0"
+        resourceConfigurations += ['in', 'en']
     }
 
     buildFeatures { viewBinding true }
@@ -29,6 +46,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions { jvmTarget = '1.8' }
+
+    // Buang resource yang tidak terpakai
+    packagingOptions {
+        resources {
+            excludes += [
+                'META-INF/DEPENDENCIES',
+                'META-INF/LICENSE',
+                'META-INF/NOTICE',
+                '**/*.kotlin_module'
+            ]
+        }
+    }
 }
 
 dependencies {

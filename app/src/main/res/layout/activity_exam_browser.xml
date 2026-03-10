@@ -14,42 +14,48 @@
         app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton android:id="@+id/btnBack"
-            android:layout_width="38dp" android:layout_height="38dp"
+            android:layout_width="36dp" android:layout_height="36dp"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Kembali"/>
 
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1" android:orientation="vertical" android:layout_marginHorizontal="8dp">
+            android:layout_weight="1" android:orientation="vertical" android:layout_marginHorizontal="6dp">
             <TextView android:id="@+id/tvTitle" android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:text="Ujian CBT"
-                android:textSize="12sp" android:textStyle="bold" android:textColor="@color/white"
+                android:textSize="11sp" android:textStyle="bold" android:textColor="@color/white"
                 android:maxLines="1" android:ellipsize="end"/>
             <TextView android:id="@+id/tvUrl" android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:textSize="10sp"
+                android:layout_height="wrap_content" android:textSize="9sp"
                 android:textColor="#80ffffff" android:maxLines="1" android:ellipsize="end"/>
         </LinearLayout>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="🔒 AMAN" android:textSize="9sp" android:textStyle="bold"
-            android:textColor="@color/gold" android:background="@drawable/badge_secure"
-            android:paddingHorizontal="7dp" android:paddingVertical="3dp" android:layout_marginEnd="4dp"/>
+        <!-- Timer countdown terkunci -->
+        <TextView android:id="@+id/tvLockTimer"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="🔒 29:59"
+            android:textSize="10sp" android:textStyle="bold"
+            android:textColor="@color/gold"
+            android:background="@drawable/badge_secure"
+            android:paddingHorizontal="8dp" android:paddingVertical="4dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"/>
 
         <ImageButton android:id="@+id/btnRefresh"
-            android:layout_width="36dp" android:layout_height="36dp"
+            android:layout_width="34dp" android:layout_height="34dp"
             android:src="@drawable/ic_refresh"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Refresh"/>
 
         <Button android:id="@+id/btnKeluar"
             android:layout_width="wrap_content" android:layout_height="32dp"
-            android:text="Keluar Ujian" android:textSize="11sp" android:textStyle="bold"
+            android:text="Keluar" android:textSize="10sp" android:textStyle="bold"
             android:textColor="@color/white" android:background="@drawable/btn_exit_small"
-            android:paddingHorizontal="12dp" android:layout_marginStart="4dp"
+            android:paddingHorizontal="10dp" android:layout_marginStart="4dp"
             android:insetTop="0dp" android:insetBottom="0dp"/>
     </LinearLayout>
 
-    <!-- Progress bar -->
+    <!-- Progress bar loading halaman -->
     <ProgressBar android:id="@+id/loadingBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent" android:layout_height="3dp"
@@ -105,7 +111,7 @@
             android:textColor="@color/blue_deep" android:layout_marginTop="12dp"/>
         <TextView android:id="@+id/tvErrorMsg"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:textSize="13sp" android:textColor="@color/gray_text"
+            android:textSize="12sp" android:textColor="@color/gray_text"
             android:gravity="center" android:layout_marginTop="8dp"/>
         <Button android:id="@+id/btnRetry"
             android:layout_width="wrap_content" android:layout_height="44dp"
