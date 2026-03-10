@@ -21,6 +21,32 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Install ImageMagick untuk resize icon
+        run: sudo apt-get install -y imagemagick
+
+      - name: Generate launcher icons dari logo
+        run: |
+          # Buat icon yang valid untuk semua resolusi dari logo_sekolah.png
+          SRC="app/src/main/res/drawable/logo_sekolah.png"
+          for density in hdpi xhdpi xxhdpi xxxhdpi; do
+            case $density in
+              hdpi)    size=72  ;;
+              xhdpi)   size=96  ;;
+              xxhdpi)  size=144 ;;
+              xxxhdpi) size=192 ;;
+            esac
+            DIR="app/src/main/res/mipmap-${density}"
+            mkdir -p "$DIR"
+            convert "$SRC" -resize ${size}x${size} "$DIR/ic_launcher.png"
+            convert "$SRC" -resize ${size}x${size} \
+              \( +clone -alpha extract \
+                 -draw "fill white circle $((size/2)),$((size/2)),$((size/2)),0" \
+                 -alpha off \) \
+              -compose copy_opacity -composite "$DIR/ic_launcher_round.png" 2>/dev/null || \
+            cp "$DIR/ic_launcher.png" "$DIR/ic_launcher_round.png"
+            echo "✅ $density: ${size}x${size}"
+          done
+
       - name: Download Poppins fonts
         run: |
           mkdir -p app/src/main/res/font
@@ -60,7 +86,6 @@ jobs:
           DATE=$(date +'%Y%m%d')
           cp app/build/outputs/apk/release/app-release.apk \
              app/build/outputs/apk/release/CBTsmkn1pol-${DATE}.apk
-          echo "APK_NAME=CBTsmkn1pol-${DATE}.apk" >> $GITHUB_ENV
           echo "APK size: $(du -sh app/build/outputs/apk/release/CBTsmkn1pol-${DATE}.apk)"
 
       - name: Upload APK Artifact
