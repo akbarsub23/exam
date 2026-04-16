@@ -177,8 +177,7 @@ class ExamBrowserActivity : AppCompatActivity() {
         }
 
         // Set lokasi cache WebView
-        val cacheDir = context.cacheDir.absolutePath
-        binding.webView.settings.setAppCachePath(cacheDir)
+
 
         CookieManager.getInstance().apply {
             setAcceptCookie(true)
