@@ -148,6 +148,9 @@ class ExamBrowserActivity : AppCompatActivity() {
     // ─── WEBVIEW ──────────────────────────────────────────────────────────────
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        // Aktifkan hardware acceleration untuk render lebih cepat
+        binding.webView.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+
         binding.webView.settings.apply {
             javaScriptEnabled     = true
             domStorageEnabled     = true
@@ -157,11 +160,25 @@ class ExamBrowserActivity : AppCompatActivity() {
             builtInZoomControls   = false
             setSupportZoom(false)
             mixedContentMode      = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            cacheMode             = WebSettings.LOAD_NO_CACHE
-            userAgentString       = "Mozilla/5.0 (Linux; Android 10) ExambroCBT/5.0"
+
+            // Cache seperti Chrome — resource CSS/JS/gambar disimpan lokal
+            // Hanya fetch ulang jika server bilang ada yang berubah
+            cacheMode             = WebSettings.LOAD_DEFAULT
+
+            // User-agent Chrome agar server kirim versi ringan (bukan fallback HTML)
+            userAgentString       = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
+
+            // Percepat render teks
+            textZoom              = 100
+
+            // Izinkan cache tersimpan di storage
             allowFileAccessFromFileURLs      = false
             allowUniversalAccessFromFileURLs = false
         }
+
+        // Set lokasi cache WebView
+        val cacheDir = context.cacheDir.absolutePath
+        binding.webView.settings.setAppCachePath(cacheDir)
 
         CookieManager.getInstance().apply {
             setAcceptCookie(true)
@@ -338,8 +355,6 @@ class ExamBrowserActivity : AppCompatActivity() {
         if (NetworkUtils.isConnected(this)) {
             binding.layoutError.visibility = View.GONE
             binding.webView.visibility     = View.VISIBLE
-            binding.webView.clearCache(true)
-            binding.webView.clearHistory()
             binding.webView.loadUrl(examUrl)
         } else {
             showError("Tidak ada koneksi jaringan.\nPeriksa WiFi dan coba lagi.")

@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
+import android.webkit.WebView
 import id.sch.smkn1gempol.exambro.R
 import id.sch.smkn1gempol.exambro.databinding.ActivitySplashBinding
 
@@ -15,6 +16,8 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Pre-inisialisasi WebView engine di background — kurangi cold-start pertama kali
+        WebView(applicationContext).destroy()
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
